@@ -4,6 +4,7 @@ module.exports = {
     'import',
   ],
   env: {
+    browser: true,
     node: true,
   },
   globals: {
