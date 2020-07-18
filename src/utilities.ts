@@ -1,7 +1,7 @@
-const crypto = require('crypto');
-const fs = require('fs');
+import * as crypto from 'crypto';
+import * as fs from 'fs';
 
-function md5(filepath) {
+export async function calcMD5(filepath: string): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
       const rs = fs.createReadStream(filepath);
@@ -16,6 +16,4 @@ function md5(filepath) {
   });
 }
 
-module.exports = {
-  md5,
-};
+export const DEFAULT_KEY = '7At16p/dyonmDW3ll9Pl1bmCsWEACxaIzLmyC0ZWGaE=';
