@@ -4,7 +4,7 @@
   "description": "Facebook Conceal for node and browser written in ts",
   "main": "lib/cjs/node/index.js",
   "module": "lib/esm/node/index.js",
-  "browser": "lib/browser/browser/index.js",
+  "browser": "lib/esm/browser/index.js",
   "typings": "lib/cjs/node/index.d.ts",
   "files": [
     "lib/"

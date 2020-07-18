@@ -7,7 +7,7 @@ Compatible with [Facebook Conceal 2.0](https://github.com/facebook/conceal)
 ## Conceal
 
 ```javascript
-const Conceal = require('facebook-conceal');
+const { Conceal } = require('facebook-conceal');
 const conceal = new Conceal('my-password');
 
 // or
