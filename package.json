@@ -13,7 +13,8 @@
     "test": "mocha -r ts-node/register test/**/*.spec.ts",
     "clean": "rm -rf ./lib/*",
     "build-browser": "tsc -p tsconfig-browser.json",
-    "build": "npm run clean && tsc -p tsconfig.json && tsc -p tsconfig-ejs.json && tsc -p tsconfig-browser.json"
+    "build": "npm run clean && tsc -p tsconfig.json && tsc -p tsconfig-ejs.json && tsc -p tsconfig-browser.json",
+    "smart-publish": "bash publish.sh"
   },
   "author": "keng42",
   "license": "MIT",
