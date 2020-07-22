@@ -1,7 +1,7 @@
-import { Conceal } from '../src/conceal';
-import { calcMD5 } from '../src/utilities';
 import { expect } from 'chai';
 import 'mocha';
+import { Conceal } from '../src/node/conceal';
+import { calcMD5 } from '../src/utilities';
 
 describe('hash-utils', () => {
   it('compare file md5', () =>
@@ -22,7 +22,7 @@ describe('facebook-conceal', () => {
   });
 
   describe('#encrypt and decrypt file', () => {
-    it('should return the same file', () => {
+    it('should return the same file', async () => {
       const conceal = new Conceal('my-password');
       const path = 'test/xxy007.png';
 
