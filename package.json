@@ -1,5 +1,5 @@
 {
-  "name": "@keng42/facebook-conceal",
+  "name": "facebook-conceal",
   "version": "2.0.0-alpha.0",
   "description": "Facebook Conceal for node and browser written in ts",
   "main": "lib/cjs/index.js",
