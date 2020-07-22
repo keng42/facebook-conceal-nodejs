@@ -1,35 +1,59 @@
-const crypto = require('crypto');
-const fs = require('fs');
+import * as crypto from 'crypto';
+import * as fs from 'fs';
+import { DEFAULT_KEY } from './utilities';
 
-function getFilesizeInBytes(filename) {
+function getFilesizeInBytes(filename: string): number {
   const stats = fs.statSync(filename);
   const fileSizeInBytes = stats.size;
   return fileSizeInBytes;
 }
 
-const defaultKey = '7At16p/dyonmDW3ll9Pl1bmCsWEACxaIzLmyC0ZWGaE=';
+export class Conceal {
+  password: string;
+  key: Buffer;
+  encoding: 'base64' | 'hex';
+  algo: 'aes-256-gcm' | 'aes-128-gcm';
 
-class Conceal {
-  constructor(pwd, key = defaultKey, encoding = 'base64', algo = 'aes-256-gcm') {
-    this.pwd = pwd;
+  isBase64: boolean;
+  versionBuf: Buffer;
+
+  constructor(
+    password: string,
+    encoding: 'base64' | 'hex' = 'base64',
+    keyStr = DEFAULT_KEY,
+    algo: 'aes-256-gcm' | 'aes-128-gcm' = 'aes-256-gcm'
+  ) {
+    this.password = password;
+    this.key = Buffer.from(
+      keyStr,
+      keyStr === DEFAULT_KEY ? 'base64' : encoding
+    );
     this.encoding = encoding;
-    this.key = Buffer.from(key, encoding);
     this.algo = algo;
+
+    this.isBase64 = encoding === 'base64';
+    this.versionBuf = Buffer.from('0102', 'hex');
   }
 
-  encryptStr(text) {
+  encryptStr(text: string, password = this.password): string {
     const iv = crypto.randomBytes(Math.ceil(12));
     const cipher = crypto.createCipheriv(this.algo, this.key, iv);
-    cipher.setAAD(Buffer.from('0102', 'hex'));
-    cipher.setAAD(Buffer.from(this.pwd, 'utf8'));
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
+    cipher.setAAD(this.versionBuf);
+    cipher.setAAD(Buffer.from(password, 'utf8'));
+    const encryptedBuf1 = cipher.update(text, 'utf8');
+    const encryptedBuf2 = cipher.final();
     const tag = cipher.getAuthTag();
-    const c = `0102${iv.toString('hex')}${encrypted}${tag.toString('hex')}`;
-    return Buffer.from(c, 'hex').toString(this.encoding);
+    const buf = Buffer.concat([
+      this.versionBuf,
+      iv,
+      encryptedBuf1,
+      encryptedBuf2,
+      tag,
+    ]);
+    return buf.toString(this.encoding);
   }
 
-  decryptStr(encrypted) {
+  decryptStr(encrypted: string, password = this.password): string {
     const cipher = Buffer.from(encrypted, this.encoding);
     const iv = Buffer.alloc(12);
     const tag = Buffer.alloc(16);
@@ -40,29 +64,33 @@ class Conceal {
 
     const decipher = crypto.createDecipheriv(this.algo, this.key, iv);
     decipher.setAuthTag(tag);
-    decipher.setAAD(Buffer.from('0102', 'hex'));
-    decipher.setAAD(Buffer.from(this.pwd, 'utf8'));
+    decipher.setAAD(this.versionBuf);
+    decipher.setAAD(Buffer.from(password, 'utf8'));
 
-    let dec = decipher.update(enc, 'hex', 'utf8');
+    let dec = decipher.update(enc, this.encoding, 'utf8');
     dec += decipher.final('utf8');
     return dec;
   }
 
-  encryptFile(src, dst) {
+  async encryptFile(
+    src: string,
+    dst: string,
+    password = this.password
+  ): Promise<boolean> {
     return new Promise((resolve, reject) => {
       try {
         const input = fs.createReadStream(src);
         const output = fs.createWriteStream(dst);
         const iv = crypto.randomBytes(Math.ceil(12));
         const cipher = crypto.createCipheriv(this.algo, this.key, iv);
-        cipher.setAAD(Buffer.from('0102', 'hex'));
-        cipher.setAAD(Buffer.from(this.pwd, 'utf8'));
+        cipher.setAAD(this.versionBuf);
+        cipher.setAAD(Buffer.from(password, 'utf8'));
 
         cipher.on('error', (err) => {
           reject(err);
         });
 
-        output.write(Buffer.from('0102', 'hex'));
+        output.write(this.versionBuf);
         output.write(iv);
 
         input.pipe(cipher).pipe(output);
@@ -82,7 +110,11 @@ class Conceal {
     });
   }
 
-  decryptFile(src, dst) {
+  async decryptFile(
+    src: string,
+    dst: string,
+    password = this.password
+  ): Promise<boolean> {
     return new Promise((resolve, reject) => {
       try {
         const fd = fs.openSync(src, 'r');
@@ -94,8 +126,8 @@ class Conceal {
 
         const decipher = crypto.createDecipheriv(this.algo, this.key, iv);
         decipher.setAuthTag(tag);
-        decipher.setAAD(Buffer.from('0102', 'hex'));
-        decipher.setAAD(Buffer.from(this.pwd, 'utf8'));
+        decipher.setAAD(this.versionBuf);
+        decipher.setAAD(Buffer.from(password, 'utf8'));
 
         decipher.on('error', (err) => {
           reject(err);
@@ -123,5 +155,3 @@ class Conceal {
     });
   }
 }
-
-module.exports = Conceal;

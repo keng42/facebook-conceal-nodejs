@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conceal</title>
+    <script src="https://cdn.jsdelivr.net/npm/almond@0.3.3/almond.min.js"></script>
+    <script src="./facebook-conceal.bundle.js"></script>
+  </head>
+  <body>
+    <h1>Facebook Conceal</h1>
+
+    <script>
+      const { Conceal } = require('facebook-conceal');
+      const conceal = new Conceal('my-password');
+
+      (async () => {
+        const plain = 'hello world @ 2017';
+        const encrypted = await conceal.encryptStr(plain);
+        const decrypted = await conceal.decryptStr(encrypted);
+      })();
+    </script>
+  </body>
+</html>
