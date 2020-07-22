@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "CommonJS",
-    "outDir": "./lib/cjs"
-  },
+    "module": "es2020",
+    "outDir": "./lib/esm"
+  }
 }

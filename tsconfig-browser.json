@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    "module": "ES2020",
+    "target": "es5",
+    "module": "amd",
+    "sourceMap": true,
     "lib": ["es6", "dom"],
     "declaration": true,
-    "outDir": "./lib/esm",
-    "rootDir": "./src",
+    "outFile": "./lib/browser/facebook-conceal.bundle.js",  
+    "rootDir": "./src/browser",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "test", "**/__tests__/*", "src/node"]
+  "include": ["src/browser/**/*.ts"],
+  "exclude": ["node_modules", "test", "**/__tests__/*"]
 }
