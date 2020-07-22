@@ -2,10 +2,8 @@
  * 浏览器使用的字符串加密解密类
  * 兼容 Conceal 2.0
  */
-
-import { DEFAULT_KEY } from '../utilities';
-
 const { crypto } = window;
+const DEFAULT_KEY = '7At16p/dyonmDW3ll9Pl1bmCsWEACxaIzLmyC0ZWGaE=';
 
 export function arrayBufferToHex(buffer: Uint8Array): string {
   return Array.prototype.map

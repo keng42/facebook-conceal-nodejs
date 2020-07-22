@@ -1,11 +1,11 @@
-import * as crypto from 'crypto';
-import * as fs from 'fs';
+import { createHash } from 'crypto';
+import { createReadStream } from 'fs';
 
 export async function calcMD5(filepath: string): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
-      const rs = fs.createReadStream(filepath);
-      const hash = crypto.createHash('md5');
+      const rs = createReadStream(filepath);
+      const hash = createHash('md5');
       rs.on('data', hash.update.bind(hash));
       rs.on('end', () => {
         resolve(hash.digest('hex'));

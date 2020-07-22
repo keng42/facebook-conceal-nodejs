@@ -1,6 +1,6 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
-import { DEFAULT_KEY } from '../utilities';
+import { DEFAULT_KEY } from './utilities';
 
 function getFilesizeInBytes(filename: string): number {
   const stats = fs.statSync(filename);
